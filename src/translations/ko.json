@@ -1,0 +1,76 @@
+{
+    "common": {
+        "save": "저장",
+        "edit": "수정",
+        "cancel": "취소",
+        "delete": "삭제",
+        "confirm": "확인",
+        "send": "전송",
+        "analyze": "AI 초안 작성",
+        "re_analyze": "AI 재분석 요청",
+        "ai_prompt_placeholder": "AI에게 추가 분석이나 수정을 요청해보세요...",
+        "ai_report": "AI 분석 리포트",
+        "ai_refine": "AI와 함께 다듬기",
+        "delete_title": "일기 삭제",
+        "delete_message": "정말로 이 일기를 삭제하시겠습니까?",
+        "mentioned_stocks": "언급된 종목",
+        "search": "검색",
+        "manage": "관리",
+        "coming_soon": "준비 중입니다",
+        "fear": "공포",
+        "neutral": "중립",
+        "greed": "탐욕",
+        "extreme_fear": "극심한 공포",
+        "extreme_greed": "극심한 탐욕"
+    },
+    "tabs": {
+        "home": "홈",
+        "diaries": "일기",
+        "portfolio": "포트폴리오",
+        "settings": "설정"
+    },
+    "home": {
+        "dashboard_title": "투자 대시보드",
+        "dashboard_subtitle": "실시간 시장 지표 및 AI 분석",
+        "sentiment_title": "투자 심리 분석",
+        "cnn_label": "공포탐욕지수",
+        "my_label": "내 투자 심리",
+        "sentiment_tip": "현재 시장은 당신보다 더 <0>탐욕적</0>입니다. 익절을 고려해보세요.",
+        "portfolio_summary": "내 자산 요약",
+        "portfolio_news": "포트폴리오 소식"
+    },
+    "diaries": {
+        "title": "투자 일기",
+        "subtitle": "지난 투자 기록을 확인해보세요",
+        "search_placeholder": "제목, 내용, 종목 검색...",
+        "no_record": "이날의 기록이 없습니다",
+        "records": "기록",
+        "search_results": "검색 결과"
+    },
+    "portfolio": {
+        "title": "내 포트폴리오",
+        "subtitle": "자산 현황을 한눈에 확인하세요",
+        "total_value": "총 자산",
+        "avg_price": "평단가",
+        "shares": "수량",
+        "profit_loss": "평가손익",
+        "add_holding": "자산 추가",
+        "empty_portfolio": "보유 중인 종목이 없습니다.",
+        "add_stock": "보유 종목 추가"
+    },
+    "new_diary": {
+        "title": "새 일기 작성",
+        "title_placeholder": "오늘의 투자 생각...",
+        "content_placeholder": "생각을 자유롭게 적어보세요...\n예: '오늘 테슬라 주가가 빠졌는데 이유 정리해줘. 480불 아래로 가면 매도할 거야.'",
+        "writing_tips": "AI 활용 팁",
+        "tip_1": "오늘의 주요 뉴스 정리를 부탁해보세요",
+        "tip_2": "특정 가격대에서의 매매 계획을 구체화해보세요",
+        "tip_3": "AI가 작성한 초안을 자유롭게 수정할 수 있습니다"
+    },
+    "settings": {
+        "title": "설정",
+        "subtitle": "앱 환경 설정을 관리하세요",
+        "language_title": "언어 설정",
+        "language_footer": "언어를 변경하면 UI 및 AI 분석 용어가 업데이트됩니다."
+    }
+}

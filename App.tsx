@@ -1,24 +1,27 @@
 import './global.css';
+import './src/i18n';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Home, BookOpen, Plus, TrendingUp, Settings } from 'lucide-react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Home, BookOpen, Plus, Settings, PieChart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 import { HomeScreen } from './src/screens/HomeScreen';
 import { DiaryListScreen } from './src/screens/DiaryListScreen';
 import { NewDiaryScreen } from './src/screens/NewDiaryScreen';
+import { PortfolioScreen } from './src/screens/PortfolioScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { DiaryDetailScreen } from './src/screens/DiaryDetailScreen';
+import { StockSearchScreen } from './src/screens/StockSearchScreen';
+import { PortfolioAllocationScreen } from './src/screens/PortfolioAllocationScreen';
 
 const Tab = createBottomTabNavigator();
-
-const PlaceholderScreen = ({ name }: { name: string }) => (
-  <View className="flex-1 bg-background items-center justify-center">
-    <Text className="text-white text-lg font-bold">{name} Screen</Text>
-    <Text className="text-gray-500">Coming Soon</Text>
-  </View>
-);
+const Stack = createNativeStackNavigator();
 
 const CustomTabBarButton = ({ children, onPress }: any) => (
   <TouchableOpacity
@@ -54,7 +57,7 @@ const screenOptions = {
   tabBarStyle: {
     backgroundColor: '#1E1E1E',
     borderTopColor: '#333',
-    height: 90, // Taller tab bar
+    height: 90,
     paddingTop: 8,
   },
   tabBarShowLabel: true,
@@ -68,17 +71,16 @@ const screenOptions = {
   },
 };
 
-const ExploreScreen = () => <PlaceholderScreen name="Explore" />;
-const SettingsScreen = () => <PlaceholderScreen name="Settings" />;
-
 const MainTabs = () => {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator screenOptions={screenOptions as any}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: t('tabs.home'),
           tabBarIcon: ({ color }) => <Home color={color} size={24} />,
         }}
       />
@@ -86,38 +88,24 @@ const MainTabs = () => {
         name="Diaries"
         component={DiaryListScreen}
         options={{
-          tabBarLabel: 'Diaries',
+          tabBarLabel: t('tabs.diaries'),
           tabBarIcon: ({ color }) => <BookOpen color={color} size={24} />,
         }}
       />
+
       <Tab.Screen
-        name="NewDiary"
-        component={NewDiaryScreen}
+        name="Portfolio"
+        component={PortfolioScreen}
         options={{
-          tabBarLabel: '',
-          tabBarButton: (props) => <CustomTabBarButton {...props} />,
-          tabBarStyle: { display: 'none' }
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate('NewDiaryStack');
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Explore"
-        component={ExploreScreen}
-        options={{
-          tabBarLabel: 'Explore',
-          tabBarIcon: ({ color }) => <TrendingUp color={color} size={24} />,
+          tabBarLabel: t('tabs.portfolio'),
+          tabBarIcon: ({ color }) => <PieChart color={color} size={24} />,
         }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarLabel: 'Settings',
+          tabBarLabel: t('tabs.settings'),
           tabBarIcon: ({ color }) => <Settings color={color} size={24} />,
         }}
       />
@@ -125,29 +113,27 @@ const MainTabs = () => {
   );
 };
 
-// We need a Stack Navigator to handle "New Diary" properly as a modal or pushed screen
-// because it has a header with "Save" and Back button.
-// Also to hide the tab bar when on that screen.
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createNativeStackNavigator();
-
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer theme={DarkTheme}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="MainTabs" component={MainTabs} />
-          <Stack.Screen
-            name="NewDiaryStack"
-            component={NewDiaryScreen}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_bottom'
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SafeAreaProvider>
+        <NavigationContainer theme={DarkTheme}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen
+              name="NewDiaryStack"
+              component={NewDiaryScreen}
+              options={{
+                presentation: 'card',
+                animation: 'slide_from_bottom'
+              }}
+            />
+            <Stack.Screen name="DiaryDetail" component={DiaryDetailScreen} />
+            <Stack.Screen name="StockSearch" component={StockSearchScreen} />
+            <Stack.Screen name="PortfolioAllocation" component={PortfolioAllocationScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

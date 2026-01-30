@@ -1,0 +1,76 @@
+{
+    "common": {
+        "save": "Save",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "send": "Send",
+        "analyze": "AI Power Draft",
+        "re_analyze": "Re-analyze with AI",
+        "ai_prompt_placeholder": "Ask AI for further analysis or edits...",
+        "ai_report": "AI Analysis Report",
+        "ai_refine": "Refine with AI",
+        "delete_title": "Delete Diary",
+        "delete_message": "Are you sure you want to delete this diary?",
+        "mentioned_stocks": "Mentioned Stocks",
+        "search": "Search",
+        "manage": "Manage",
+        "coming_soon": "Coming Soon",
+        "fear": "Fear",
+        "neutral": "Neutral",
+        "greed": "Greed",
+        "extreme_fear": "Extr. Fear",
+        "extreme_greed": "Extr. Greed"
+    },
+    "tabs": {
+        "home": "Home",
+        "diaries": "Diaries",
+        "portfolio": "Portfolio",
+        "settings": "Settings"
+    },
+    "home": {
+        "dashboard_title": "Investment Dashboard",
+        "dashboard_subtitle": "Real-time market status & AI analysis",
+        "sentiment_title": "Sentiment Analysis",
+        "cnn_label": "Fear & Greed Index",
+        "my_label": "My Sentiment",
+        "sentiment_tip": "The market is <0>Greedier</0> than you. Consider taking profits?",
+        "portfolio_summary": "Portfolio Summary",
+        "portfolio_news": "Portfolio News"
+    },
+    "diaries": {
+        "title": "Investment Diary",
+        "subtitle": "Check your past investment records",
+        "search_placeholder": "Search title, content, stock...",
+        "no_record": "No record for this day",
+        "records": "Records",
+        "search_results": "Search Results"
+    },
+    "portfolio": {
+        "title": "My Portfolio",
+        "subtitle": "Track your assets at a glance",
+        "total_value": "Total Value",
+        "avg_price": "Avg. Price",
+        "shares": "Shares",
+        "profit_loss": "Profit/Loss",
+        "add_holding": "Add Holding",
+        "empty_portfolio": "Your portfolio is empty.",
+        "add_stock": "Add Stock"
+    },
+    "new_diary": {
+        "title": "New Diary",
+        "title_placeholder": "Today's investment thought...",
+        "content_placeholder": "Write your thoughts freely...\nEx: 'Tesla price dropped today. summarize the reason. I'll sell if it goes below $480.'",
+        "writing_tips": "AI Writing Tips",
+        "tip_1": "Ask AI to summarize today's major news",
+        "tip_2": "Specify your trading plans at certain price levels",
+        "tip_3": "Feel free to edit the draft AI provides"
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Manage your app preferences",
+        "language_title": "Language Setting",
+        "language_footer": "Changing the language will update the UI and AI analysis terminology."
+    }
+}

@@ -18,30 +18,33 @@ export const MOCK_DIARIES: Diary[] = [
     {
         id: '1',
         title: 'NVIDIA Buy Decision',
-        date: '2026-01-04',
+        date: '2026-01-05',
         emotion: 'happy',
-        preview: 'AI semiconductor market seems to continue growing, so I bought more NVIDIA. Jensen Huang...',
+        preview: 'Bought NVDA today. AI market is booming.',
+        content: "AI semiconductor market seems to continue growing, so I bought more NVIDIA. Jensen Huang\'s vision about the future of accelerated computing is very convincing. The demand for H100 and soon H200 remains unprecedented. I\'m planning to hold this for at least 3 years to see where the AI revolution takes us.",
         aiSummary: 'Positive outlook on AI sector',
         relatedStocks: ['NVDA'],
     },
     {
         id: '2',
-        title: 'Tesla Earnings Worries',
-        date: '2026-01-03',
-        emotion: 'neutral',
-        preview: 'Tesla quarterly earnings are coming up. Deliveries were good but margins are worrying. Adjusted some positions...',
-        aiSummary: 'Cautious approach before earnings',
+        title: 'TSLA Concerns',
+        date: '2026-01-04',
+        emotion: 'sad',
+        preview: 'Tesla margins are dropping. Need to reconsider.',
+        content: "Tesla\'s Q4 margins were lower than expected. The price war in China is intensifying, and the Cybertruck production ramp-up is taking longer than predicted. I should watch the $150 support level closely. If it breaks, I might need to trim my position.",
+        aiSummary: 'Caution advised for TSLA due to margin pressure',
         relatedStocks: ['TSLA'],
     },
     {
         id: '3',
-        title: 'Apple Cut Loss',
-        date: '2026-01-01',
-        emotion: 'sad',
-        preview: 'Decided to cut losses on Apple. Innovation seems stagnant lately...',
-        aiSummary: 'Negative sentiment on innovation',
-        relatedStocks: ['AAPL'],
-    }
+        title: 'Market Neutrality',
+        date: '2026-01-02',
+        emotion: 'neutral',
+        preview: 'Waiting for CPI data this week.',
+        content: "The market is in wait-and-see mode ahead of the CPI print. Inflation seems sticky, which could delay rate cuts. I'm keeping a high cash position for now to pounce on any significant dips in quality tech stocks.",
+        aiSummary: 'Observing macro conditions before next move',
+        relatedStocks: ['SPY', 'QQQ'],
+    },
 ];
 
 // Generate simple mock chart data
@@ -67,3 +70,52 @@ export const MOCK_MARKET_INDICES: { [key: string]: MarketIndex } = {
         chartData: generateChartData(14800, 0.008),
     }
 };
+
+import { PortfolioHolding } from "../types";
+export const MOCK_PORTFOLIO: PortfolioHolding[] = [
+    {
+        id: '1',
+        ticker: 'COIN',
+        name: '코인베이스',
+        averagePrice: 298.50,
+        shares: 19,
+        currentPrice: 252.98,
+        marketValue: 4806.66,
+        totalGain: -808.01,
+        gainPercent: -14.3
+    },
+    {
+        id: '2',
+        ticker: 'TSLA',
+        name: '테슬라',
+        averagePrice: 187.12,
+        shares: 5.001471,
+        currentPrice: 242.84,
+        marketValue: 2260.98,
+        totalGain: 389.67,
+        gainPercent: 20.8
+    },
+    {
+        id: '3',
+        ticker: 'PLTR',
+        name: '팔란티어',
+        averagePrice: 13.50,
+        shares: 22,
+        currentPrice: 42.12,
+        marketValue: 3824.68,
+        totalGain: 2335.28,
+        gainPercent: 156.7
+    },
+    {
+        id: '4',
+        ticker: 'TSLL',
+        name: 'TSLL',
+        averagePrice: 19.36,
+        shares: 289,
+        currentPrice: 19.12,
+        marketValue: 5569.34,
+        totalGain: -106.96,
+        gainPercent: -1.8
+    }
+];
+

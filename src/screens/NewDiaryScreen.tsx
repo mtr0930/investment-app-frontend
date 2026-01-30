@@ -1,74 +1,234 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, KeyboardAvoidingView, Platform, Alert, TextInput, TouchableOpacity, Text, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Lightbulb } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { TrendingUp, Send, Calendar, Smile, Meh, Frown } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+
+import { DiaryDetailHeader } from '../components/diaries/DiaryDetailHeader';
+import { AIAnalysisButton } from '../components/newdiary/AIAnalysisButton';
+import { diaryApi } from '../services/diaryApi';
+import { DiaryAnalyzeResponse } from '../types';
+import { useAIAnalysis } from '../hooks/useAIAnalysis';
+import { AIStreamingLoader } from '../components/common/SkeletonLoader';
 
 export const NewDiaryScreen = () => {
-    const navigation = useNavigation();
+    const { t } = useTranslation();
+    const route = useRoute<any>();
+    const navigation = useNavigation<any>();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [aiResult, setAiResult] = useState<DiaryAnalyzeResponse | null>(null);
+    const [aiPrompt, setAiPrompt] = useState('');
+
+    const { startAnalysis, isAnalyzing, analysisResult, streamingSummary, streamingTickers, streamingScore } = useAIAnalysis();
+
+    useEffect(() => {
+        if (analysisResult) {
+            setAiResult(analysisResult);
+            setAiPrompt('');
+        }
+    }, [analysisResult]);
+
+    // Use date from params, or fallback to today
+    const selectedDate = route.params?.date || new Date().toISOString().split('T')[0];
+
+    const handleSave = async () => {
+        if (!title.trim() || !content.trim()) {
+            Alert.alert('Error', 'Please enter title and content');
+            return;
+        }
+
+        Alert.alert(
+            '저장하시겠습니까?',
+            '작성한 일기를 저장합니다.',
+            [
+                { text: '취소', style: 'cancel' },
+                {
+                    text: '저장',
+                    onPress: async () => {
+                        try {
+                            await diaryApi.createDiary({
+                                title: title.trim(),
+                                content: content.trim(),
+                                diary_date: selectedDate,
+                                ...(aiResult ? {
+                                    ai_summary: aiResult.ai_summary,
+                                    mentioned_tickers: aiResult.mentioned_tickers,
+                                    market_sentiment_score: aiResult.sentiment_score
+                                } : {})
+                            });
+
+                            Alert.alert('성공', '일기가 저장되었습니다.', [
+                                { text: '확인', onPress: () => navigation.goBack() }
+                            ]);
+                        } catch (error) {
+                            console.error('Error saving diary:', error);
+                            Alert.alert('Error', 'Failed to save diary');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const handleAIAnalysis = () => {
+        if (!content.trim()) {
+            Alert.alert('Info', 'Please write something in the content first');
+            return;
+        }
+        startAnalysis(content, aiPrompt.trim());
+    };
+
+    const getScoreEmotion = (score: number | null): 'happy' | 'sad' | 'neutral' => {
+        if (score === null) return 'neutral';
+        if (score >= 67) return 'happy';
+        if (score <= 33) return 'sad';
+        return 'neutral';
+    };
+
+    const getEmotionIcon = () => {
+        const score = isAnalyzing ? streamingScore : (aiResult?.sentiment_score ?? null);
+        const emotion = getScoreEmotion(score);
+
+        switch (emotion) {
+            case 'happy': return <Smile size={28} color="#10B981" />;
+            case 'sad': return <Frown size={28} color="#EF4444" />;
+            default: return <Meh size={28} color="#EAB308" />;
+        }
+    };
+
+    const getEmotionText = () => {
+        const score = isAnalyzing ? streamingScore : (aiResult?.sentiment_score ?? null);
+        const emotion = getScoreEmotion(score);
+        return t(`common.${emotion === 'happy' ? 'greed' : emotion === 'sad' ? 'fear' : 'neutral'}`);
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-background">
+            <StatusBar barStyle="light-content" />
+            <DiaryDetailHeader
+                onBack={() => navigation.goBack()}
+                onEdit={() => { }}
+                onDelete={() => { }}
+                isEditing={true}
+                onSave={handleSave}
+                onCancel={() => navigation.goBack()}
+            />
+
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
-                <View className="flex-row items-center px-4 py-3 border-b border-gray-900">
-                    <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-                        <ArrowLeft color="white" size={24} />
-                    </TouchableOpacity>
-                    <Text className="text-white text-lg font-bold flex-1 text-center mr-8">New Diary</Text>
-                    <TouchableOpacity className="bg-[#1a2e25] px-4 py-1.5 rounded-full border border-primary">
-                        <Text className="text-primary font-bold">Save</Text>
-                    </TouchableOpacity>
-                </View>
+                <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 60 }}>
+                    {/* Header Section (Date, Emotion, Title) */}
+                    <View className="mt-6 mb-8">
+                        <View className="flex-row items-center justify-between mb-4">
+                            <View className="flex-row items-center bg-gray-900 px-3 py-1.5 rounded-full border border-gray-800">
+                                <Calendar size={14} color="#6B7280" />
+                                <Text className="text-gray-400 text-xs ml-2 font-medium">{selectedDate}</Text>
+                            </View>
+                            <View className="flex-row items-center gap-2">
+                                {getEmotionIcon()}
+                                <Text className="text-white font-bold text-base">
+                                    {getEmotionText()}
+                                </Text>
+                            </View>
+                        </View>
 
-                <ScrollView className="flex-1 px-4 pt-6">
-                    <Text className="text-gray-500 mb-2">Enter Title</Text>
-                    <TextInput
-                        className="text-white text-xl font-bold border-b border-gray-800 pb-2 mb-6"
-                        placeholder="Today's investment thought..."
-                        placeholderTextColor="#4B5563"
-                        value={title}
-                        onChangeText={setTitle}
-                    />
-
-                    <View className="bg-card rounded-2xl p-4 min-h-[250px] border border-gray-800">
                         <TextInput
-                            className="text-white text-base leading-6"
-                            placeholder="Write your thoughts freely...\n\nEx: 'NVDA AI chip demand is increasing. Jensen's vision is impressive.'"
+                            className="text-white text-3xl font-bold leading-tight border-b border-gray-800 pb-2"
+                            placeholder={t('new_diary.title_placeholder')}
                             placeholderTextColor="#4B5563"
+                            value={title}
+                            onChangeText={setTitle}
                             multiline
-                            textAlignVertical="top"
-                            value={content}
-                            onChangeText={setContent}
-                            style={{ minHeight: 200 }}
                         />
                     </View>
 
-                    <TouchableOpacity className="mt-6 active:opacity-90">
-                        <LinearGradient
-                            colors={['#7E22CE', '#3B0764']} // Purple gradients
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            className="py-4 rounded-xl items-center flex-row justify-center border border-purple-500/30"
-                        >
-                            <Text className="text-white font-bold text-lg mr-2">✨ Analyze with AI</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                    {/* AI Section */}
+                    <View className="mb-8">
+                        <View className="mb-4">
+                            <Text className="text-purple-400 font-bold mb-2 text-xs uppercase tracking-wider">{t('common.ai_refine')}</Text>
+                            <View className="bg-black/20 rounded-xl border border-purple-500/40 flex-row items-center p-2">
+                                <TextInput
+                                    className="flex-1 text-gray-200 px-2 py-2"
+                                    placeholder={t('common.ai_prompt_placeholder')}
+                                    placeholderTextColor="#6B7280"
+                                    value={aiPrompt}
+                                    onChangeText={setAiPrompt}
+                                />
+                                <TouchableOpacity
+                                    onPress={handleAIAnalysis}
+                                    disabled={isAnalyzing || (!aiPrompt && !content)}
+                                    className={`p-2 rounded-lg ${isAnalyzing || (!aiPrompt && !content) ? 'bg-gray-800' : 'bg-purple-600'}`}
+                                >
+                                    <Send size={16} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
-                    <View className="mt-6 bg-[#0F172A] p-4 rounded-xl border border-blue-900/30">
-                        <View className="flex-row items-center mb-2">
-                            <Lightbulb size={18} color="#FDBA74" />
-                            <Text className="text-blue-200 font-bold ml-2">Writing Tips</Text>
-                        </View>
-                        <View className="gap-2 pl-1">
-                            <Text className="text-gray-400 text-xs">• Mention stock tickers (AAPL, TSLA) for auto-tagging</Text>
-                            <Text className="text-gray-400 text-xs">• Be honest about your reasons and emotions</Text>
-                            <Text className="text-gray-400 text-xs">• It helps for future review</Text>
-                        </View>
+                        {(aiResult || isAnalyzing) && (
+                            <View className="bg-[#2D1B4E]/40 rounded-2xl p-6 border border-purple-500/30">
+                                <View className="flex-row items-center mb-5">
+                                    <View className="bg-purple-500/20 p-2 rounded-lg mr-3">
+                                        <TrendingUp size={18} color="#A78BFA" />
+                                    </View>
+                                    <Text className="text-purple-300 font-bold text-base">{t('common.ai_report')}</Text>
+                                </View>
+
+                                {isAnalyzing ? (
+                                    <View>
+                                        {/* Streaming Tickers - Above Summary */}
+                                        {streamingTickers.length > 0 && (
+                                            <View className="flex-row flex-wrap gap-2 mb-4">
+                                                {streamingTickers.map(ticker => (
+                                                    <View key={ticker} className="bg-green-500/10 px-2 py-1 rounded-md border border-green-500/20">
+                                                        <Text className="text-green-400 text-[10px] font-bold">#{ticker}</Text>
+                                                    </View>
+                                                ))}
+                                            </View>
+                                        )}
+
+                                        <Text className="text-gray-100 text-[16px] leading-7 font-medium mb-4">
+                                            {streamingSummary}
+                                        </Text>
+
+                                        <AIStreamingLoader />
+                                    </View>
+                                ) : (
+                                    <View>
+                                        {/* Final Tickers - Above Summary */}
+                                        {aiResult?.mentioned_tickers && aiResult.mentioned_tickers.length > 0 && (
+                                            <View className="flex-row flex-wrap gap-2 mb-4">
+                                                {aiResult.mentioned_tickers.map(ticker => (
+                                                    <View key={ticker} className="bg-green-500/10 px-2 py-1 rounded-md border border-green-500/20">
+                                                        <Text className="text-green-400 text-[10px] font-bold">#{ticker}</Text>
+                                                    </View>
+                                                ))}
+                                            </View>
+                                        )}
+
+                                        <Text className="text-gray-100 text-[16px] leading-7 font-medium">
+                                            {aiResult?.ai_summary}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
                     </View>
-                    <View className="h-20" />
+
+                    {/* My Notes Section */}
+                    <View className="mb-10">
+                        <Text className="text-gray-500 font-bold mb-4 uppercase tracking-widest text-xs">My Notes</Text>
+                        <TextInput
+                            className="text-gray-300 text-lg leading-8 border border-gray-800 rounded-xl p-4 min-h-[200px] bg-gray-900/30"
+                            placeholder={t('new_diary.content_placeholder')}
+                            placeholderTextColor="#4B5563"
+                            value={content}
+                            onChangeText={setContent}
+                            multiline
+                            textAlignVertical="top"
+                        />
+                    </View>
+
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
