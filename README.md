@@ -56,3 +56,7 @@ const HOST = '192.168.x.x'; // 본인의 PC IP 주소로 변경
 
 > [!TIP]
 > Mac의 경우 터미널에서 `ipconfig getifaddr en0` 명령어로 IP를 확인할 수 있습니다.
+
+## 샘플 페이지 화면
+<img width="3221" height="1928" alt="image" src="https://github.com/user-attachments/assets/cc0a342b-2cbc-4fda-938e-05799829778c" />
+
