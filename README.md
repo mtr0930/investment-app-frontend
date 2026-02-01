@@ -60,3 +60,6 @@ const HOST = '192.168.x.x'; // 본인의 PC IP 주소로 변경
 ## 샘플 페이지 화면
 <img width="3221" height="1928" alt="image" src="https://github.com/user-attachments/assets/cc0a342b-2cbc-4fda-938e-05799829778c" />
 
+<img width="1638" height="1234" alt="image" src="https://github.com/user-attachments/assets/6884f359-1748-41c2-a25f-cba0d771f57c" />
+
+
